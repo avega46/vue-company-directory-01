@@ -1,5 +1,9 @@
 <script setup>
 import { ref } from 'vue'
+import { useAuth } from '@/composables/useAuth'
+
+const { isAuthenticated, logout, user } = useAuth()
+
 const brand = ref ('🛰 Fake Company Directory')
 </script>
 
@@ -11,9 +15,14 @@ const brand = ref ('🛰 Fake Company Directory')
                 <span class="brand-title">{{ brand }}</span>
             </RouterLink>
             <div class="menu">
-                <a href="#" class="menu-item">Departments</a>
-                <a href="#" class="menu-item">Settings</a>
-                <a href="#" class="menu-login">Logout</a>
+                <p v-show="isAuthenticated" class="px2 py-4">Welcome back <strong><i>{{ user.name }}</i></strong></p>
+                    <div v-if="isAuthenticated">
+                    <RouterLink :to="{name: 'Settings'}" href="#" class="menu-item">Settings</RouterLink>
+                    <button href="#" class="menu-logout" @click="logout">Logout</button>
+                </div>
+                <div v-else>
+                    <RouterLink :to="{name: 'Login'}" href="#" class="menu-login">Login</RouterLink>
+                </div>
             </div>
         </div>
     </nav>
@@ -36,10 +45,16 @@ nav {
 
     .menu {
         @apply flex gap-2;
+        & div {
+        @apply py-2;
+        }
         &-item {
             @apply rounded-md px-4 py-2 hover:bg-amber-600 hover:text-slate-500;
         }
         &-login {
+            @apply rounded-md bg-green-600 px-4 py-2 hover:bg-green-700 hover:text-slate-900;
+        }
+        &-logout {
             @apply rounded-md bg-blue-600 px-4 py-2 hover:bg-amber-600 hover:text-slate-900;
         }
     }
